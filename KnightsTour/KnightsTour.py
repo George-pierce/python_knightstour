@@ -17,6 +17,15 @@ class KnightsTour():
         self.boardSize=boardSize     
         self.playersBoard = Board(boardSize)
 
+    def runSimulation(self,startingRow,startingColumn):
+        print 'You are starting at row ',startingRow, ' and column ', startingColumn
+
+
 Tour = KnightsTour(8)
 print Tour.knightsMoves
 print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in Tour.playersBoard.gameBoard]))
+
+startingRow = int(raw_input('Enter your starting position: (Row #) '))
+startingColumn = int(raw_input('Enter your starting position: (Column #) '))
+
+Tour.runSimulation(startingRow,startingColumn)
