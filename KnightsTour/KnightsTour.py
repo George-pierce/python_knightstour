@@ -10,7 +10,7 @@ class Board():
      
     def resetPosition(self, rowIndex,columnIndex):
         if self.isPositionOnBoard(rowIndex,columnIndex):
-            self.gameBoard[rowIndex][columnIndex] = '0'       
+            self.gameBoard[rowIndex][columnIndex] = 0       
 
     def setPosition(self, rowIndex, columnIndex,stepInterval):
         if self.isPositionOnBoard(rowIndex,columnIndex):
@@ -22,7 +22,7 @@ class Board():
         print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
 
     def isValidMove(self,row,column):
-       # Is move on gameBoard?       
+       # Is move on gameBoard?
        if not self.isPositionOnBoard(row,column):
            return False        
        #is move still valid, ie not traversed already
@@ -31,7 +31,7 @@ class Board():
        return True
 
     def isPositionOnBoard(self,row,column):
-       if (row < 0) or (column < 0) or (row > len(self.gameBoard)-1) or (column > len(self.gameBoard)-1):
+       if (row < 0) or (column < 0) or (row > len(self.gameBoard) - 1) or (column > len(self.gameBoard) - 1):
            return False 
        return True
 
@@ -52,13 +52,16 @@ class KnightsTour():
         self.initialize(boardSize)
 
     def initialize(self,boardSize):
-        self.boardSize=boardSize     
+        self.boardSize = boardSize     
         self.playersBoard = Board(boardSize)
 
     def printBoard(self):
         self.playersBoard.printBoard()
 
     def runSimulation(self,startingRow,startingColumn,stepInterval):
+        
+        if startingRow == 6 and startingColumn ==6:
+            gotcha =2
         validMove = self.playersBoard.isValidMove(startingRow,startingColumn)
         if validMove:
             #Update the board with new position
@@ -71,17 +74,20 @@ class KnightsTour():
                 time.sleep(50)
         else:
             return      
-        #Print the current Location on the board
-        self.printBoard()
-        #Try each available move, and run the simulation on the new starting position
+            #Print the current Location on the board
+            #self.printBoard()
+            #Try each available move, and run the simulation on the new
+            #starting position
         for indexRow,indexColumn in self.knightsMoves:
-            newPosition_Row = startingRow+ indexRow 
+            newPosition_Row = startingRow + indexRow 
             newPosition_Column = startingColumn + indexColumn           
-            self.runSimulation(newPosition_Row,newPosition_Column,stepInterval+1)
+            self.runSimulation(newPosition_Row,newPosition_Column,stepInterval + 1)
             self.playersBoard.resetPosition(newPosition_Row,newPosition_Column)
-
         
-
+        #print "Backtracking from current Position", startingRow,
+        #startingColumn
+       
+        
 boardSize = 8
 Tour = KnightsTour(boardSize)
 Tour.printBoard()
@@ -90,7 +96,7 @@ startingRow = 0
 startingColumn = 0
 
 while (startingRow < 1 or startingRow > boardSize) or (startingColumn < 1 or startingColumn > boardSize):
-    startingRow = int(raw_input('Enter your starting position: (Row # 1-8) ')) -1
-    startingColumn = int(raw_input('Enter your starting position: (Column # 1-8) ')) -1
+    startingRow = int(raw_input('Enter your starting position: (Row # 1-8) ')) - 1
+    startingColumn = int(raw_input('Enter your starting position: (Column # 1-8) ')) - 1
 
 Tour.runSimulation(startingRow,startingColumn,1)
