@@ -1,4 +1,5 @@
 import time
+import sys
 
 class Board():
     gameBoard = None
@@ -60,13 +61,11 @@ class KnightsTour():
 
     def runSimulation(self,startingRow,startingColumn,stepInterval):
         
-        if startingRow == 6 and startingColumn ==6:
-            gotcha =2
         validMove = self.playersBoard.isValidMove(startingRow,startingColumn)
         if validMove:
-            #Update the board with new position
-            print 'You are starting at row ',startingRow, ' and column ', startingColumn
+            #Update the board with new position                    
             self.playersBoard.setPosition(startingRow,startingColumn,1)
+            self.printBoard()
             #Check if we finished the Tour
             if self.playersBoard.successfulTraversal():
                 print "We won!!" 
@@ -75,27 +74,30 @@ class KnightsTour():
         else:
             return      
             #Print the current Location on the board
-            #self.printBoard()
+            #
             #Try each available move, and run the simulation on the new
             #starting position
+        currentStep =stepInterval+1
         for indexRow,indexColumn in self.knightsMoves:
             newPosition_Row = startingRow + indexRow 
             newPosition_Column = startingColumn + indexColumn           
-            self.runSimulation(newPosition_Row,newPosition_Column,stepInterval + 1)
+            print 'Moving to ',newPosition_Row, ' and column ', newPosition_Column   
+            self.runSimulation(newPosition_Row,newPosition_Column,currentStep)
             self.playersBoard.resetPosition(newPosition_Row,newPosition_Column)
-        
-        #print "Backtracking from current Position", startingRow,
-        #startingColumn
+            
+        print "Backtracking from current Position", startingRow, startingColumn
+        self.printBoard()
        
         
 boardSize = 8
+
 Tour = KnightsTour(boardSize)
 Tour.printBoard()
+sys.setrecursionlimit(1500)
+startingRow = -1
+startingColumn = -1
 
-startingRow = 0
-startingColumn = 0
-
-while (startingRow < 1 or startingRow > boardSize) or (startingColumn < 1 or startingColumn > boardSize):
+while (startingRow < 0 or startingRow > boardSize) or (startingColumn < 0 or startingColumn > boardSize):
     startingRow = int(raw_input('Enter your starting position: (Row # 1-8) ')) - 1
     startingColumn = int(raw_input('Enter your starting position: (Column # 1-8) ')) - 1
 
