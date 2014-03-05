@@ -4,7 +4,7 @@ import sys
 class Board():
     gameBoard = None
     currentPositionChar = 'K'
-    visitedPositionChar = 'X'
+    visitedPositionChar = 'K'
 
     def __init__(self,boardSize):
         self.gameBoard = [[0 for x in xrange(boardSize)] for x in xrange(boardSize)]
@@ -16,9 +16,7 @@ class Board():
     def setPosition(self, rowIndex, columnIndex,stepInterval):
         if self.isPositionOnBoard(rowIndex,columnIndex):
             self.gameBoard[rowIndex][columnIndex] = self.visitedPositionChar
-        else:
-            io = 2
-    
+            
     def printBoard(self):
         print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
 
@@ -65,35 +63,32 @@ class KnightsTour():
         if validMove:
             #Update the board with new position                    
             self.playersBoard.setPosition(startingRow,startingColumn,1)
-            self.printBoard()
+            #self.printBoard()
             #Check if we finished the Tour
             if self.playersBoard.successfulTraversal():
                 print "We won!!" 
                 self.printBoard()
                 time.sleep(50)
         else:
-            return      
-            #Print the current Location on the board
-            #
-            #Try each available move, and run the simulation on the new
-            #starting position
+            return              
+            
         currentStep =stepInterval+1
         for indexRow,indexColumn in self.knightsMoves:
             newPosition_Row = startingRow + indexRow 
             newPosition_Column = startingColumn + indexColumn           
-            print 'Moving to ',newPosition_Row, ' and column ', newPosition_Column   
-            self.runSimulation(newPosition_Row,newPosition_Column,currentStep)
-            self.playersBoard.resetPosition(newPosition_Row,newPosition_Column)
+            if self.playersBoard.isValidMove(newPosition_Row,newPosition_Column):
+                 self.runSimulation(newPosition_Row,newPosition_Column,currentStep)
+                 self.playersBoard.resetPosition(newPosition_Row,newPosition_Column)
             
-        print "Backtracking from current Position", startingRow, startingColumn
-        self.printBoard()
-       
+       # print "Backtracking from current Position", startingRow, startingColumn, "\n"
+        self.playersBoard.resetPosition(startingRow,startingColumn)
+               
         
 boardSize = 8
 
 Tour = KnightsTour(boardSize)
 Tour.printBoard()
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(5000)
 startingRow = -1
 startingColumn = -1
 
