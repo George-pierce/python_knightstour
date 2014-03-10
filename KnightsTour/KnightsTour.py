@@ -9,14 +9,12 @@ class Board():
     def __init__(self,boardSize):
         self.gameBoard = [[0 for x in xrange(boardSize)] for x in xrange(boardSize)]
      
-    def resetPosition(self, rowIndex,columnIndex):
-        if self.isPositionOnBoard(rowIndex,columnIndex):
-            self.gameBoard[rowIndex][columnIndex] = 0       
+    def resetPosition(self, rowIndex,columnIndex):        
+            self.gameBoard[rowIndex][columnIndex] = 0 
 
-    def setPosition(self, rowIndex, columnIndex,stepInterval):
-        if self.isPositionOnBoard(rowIndex,columnIndex):
-            self.gameBoard[rowIndex][columnIndex] = self.visitedPositionChar
-            
+    def setPosition(self, rowIndex, columnIndex,stepInterval):        
+            self.gameBoard[rowIndex][columnIndex] = self.visitedPositionChar  
+
     def printBoard(self):
          s = [[str(e) for e in row] for row in gameBoard]
          lengths = [max(map(len,col)) for col in zip(*s)]
@@ -27,7 +25,7 @@ class Board():
        if not self.isPositionOnBoard(row,column):
            return False        
        #is move still valid, ie not traversed already
-       if self.gameBoard[row][column] != 0:
+       if str(self.gameBoard[row][column]) == self.visitedPositionChar:
            return False
        return True
 
@@ -39,10 +37,9 @@ class Board():
     def successfulTraversal(self):
          for row in range(len(self.gameBoard)):
             for column in range(len(self.gameBoard[row])):
-                if str(self.gameBoard[row][column]) == '0':
+                if str(self.gameBoard[row][column]) != self.visitedPositionChar:
                     return False
-         return True
-
+         return True   
 
 class KnightsTour():
     boardSize = 8
@@ -59,38 +56,31 @@ class KnightsTour():
     def printBoard(self):
         self.playersBoard.printBoard()
 
-    def runSimulation(self,startingRow,startingColumn,stepInterval):
-        
-        validMove = self.playersBoard.isValidMove(startingRow,startingColumn)
-        if validMove:
-            #Update the board with new position                    
-            self.playersBoard.setPosition(startingRow,startingColumn,1)
-            #self.printBoard()
-            #Check if we finished the Tour
-            if self.playersBoard.successfulTraversal():
-                print "We won!!" 
-                self.printBoard()
-                time.sleep(50)
-        else:
-            return              
+    def runSimulation(self,startingRow,startingColumn,stepInterval):        
+       
+        #Update the board with new position                    
+        self.playersBoard.setPosition(startingRow,startingColumn,1)        
+        #Check if we finished the Tour
+        if self.playersBoard.successfulTraversal():
+            print "We won!!" 
+            self.printBoard()
+            time.sleep(3000)                 
             
         currentStep =stepInterval+1
         for indexRow,indexColumn in self.knightsMoves:
-            newPosition_Row = startingRow + indexRow 
-            newPosition_Column = startingColumn + indexColumn           
-            if self.playersBoard.isValidMove(newPosition_Row,newPosition_Column):
-                 self.runSimulation(newPosition_Row,newPosition_Column,currentStep)
-                 self.playersBoard.resetPosition(newPosition_Row,newPosition_Column)
-            
-       # print "Backtracking from current Position", startingRow, startingColumn, "\n"
-        self.playersBoard.resetPosition(startingRow,startingColumn)
-               
+            nextRow = startingRow + indexRow 
+            nextColumn = startingColumn + indexColumn             
+                            
+            if self.playersBoard.isPositionOnBoard(nextRow,nextColumn) and self.playersBoard.isValidMove(nextRow,nextColumn):
+                self.runSimulation(nextRow,nextColumn,currentStep)   
         
-boardSize = 8
+        self.playersBoard.resetPosition(startingRow,startingColumn)        
+        
+boardSize = 5
 
 Tour = KnightsTour(boardSize)
 Tour.printBoard()
-sys.setrecursionlimit(5000)
+sys.setrecursionlimit(1500)
 startingRow = -1
 startingColumn = -1
 
@@ -99,3 +89,4 @@ while (startingRow < 0 or startingRow > boardSize) or (startingColumn < 0 or sta
     startingColumn = int(raw_input('Enter your starting position: (Column # 1-8) ')) - 1
 
 Tour.runSimulation(startingRow,startingColumn,1)
+print "Sorry, no tour possible for your starting positions"
