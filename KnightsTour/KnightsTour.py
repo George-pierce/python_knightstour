@@ -18,7 +18,9 @@ class Board():
             self.gameBoard[rowIndex][columnIndex] = self.visitedPositionChar
             
     def printBoard(self):
-        print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
+         s = [[str(e) for e in row] for row in gameBoard]
+         lengths = [max(map(len,col)) for col in zip(*s)]
+         print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
 
     def isValidMove(self,row,column):
        # Is move on gameBoard?
