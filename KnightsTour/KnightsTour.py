@@ -13,21 +13,24 @@ class Board():
             self.gameBoard[rowIndex][columnIndex] = 0 
 
     def setPosition(self, rowIndex, columnIndex,stepInterval):        
-            self.gameBoard[rowIndex][columnIndex] = self.visitedPositionChar  
+            self.gameBoard[rowIndex][columnIndex] = stepInterval  
 
     def printBoard(self):
          s = [[str(e) for e in row] for row in self.gameBoard]
          lengths = [max(map(len,col)) for col in zip(*s)]
-         print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
+         fmt = "|".join("{{:{}}}".format(x) for x in lengths)
+         table = [fmt.format(*row) for row in s]
+         print "\n".join(table)
+         #print('\n'.join([''.join(['{:1}'.format(item) for item in row]) for row in self.gameBoard]))
 
     def isValidMove(self,row,column):
        # Is move on gameBoard?
        if not self.isPositionOnBoard(row,column):
            return False        
        #is move still valid, ie not traversed already
-       if str(self.gameBoard[row][column]) == self.visitedPositionChar:
-           return False
-       return True
+       if self.gameBoard[row][column] == 0:#self.visitedPositionChar:
+           return True
+       return False
 
     def isPositionOnBoard(self,row,column):
        if (row < 0) or (column < 0) or (row > len(self.gameBoard) - 1) or (column > len(self.gameBoard) - 1):
@@ -37,7 +40,7 @@ class Board():
     def successfulTraversal(self):
          for row in range(len(self.gameBoard)):
             for column in range(len(self.gameBoard[row])):
-                if str(self.gameBoard[row][column]) != self.visitedPositionChar:
+                if self.gameBoard[row][column] == 0:
                     return False
          return True   
 
@@ -59,7 +62,7 @@ class KnightsTour():
     def runSimulation(self,startingRow,startingColumn,stepInterval):        
        
         #Update the board with new position                    
-        self.playersBoard.setPosition(startingRow,startingColumn,1)        
+        self.playersBoard.setPosition(startingRow,startingColumn,stepInterval)        
         #Check if we finished the Tour
         if self.playersBoard.successfulTraversal():
             print "We won!!" 
