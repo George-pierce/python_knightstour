@@ -105,12 +105,11 @@ class Board():
             self.gameBoard[rowIndex][columnIndex] = stepInterval  
 
     def printBoard(self):
-         s = [[str(e).zfill(2) for e in row] for row in self.gameBoard]
+         s = [[str(e).zfill(1) for e in row] for row in self.gameBoard]
          lengths = [max(map(len,col)) for col in zip(*s)]
          fmt = " | ".join("{{:{}}}".format(x) for x in lengths)
          table = [fmt.format(*row) for row in s]
-         print "\n".join(table)
-         print "\n"
+         print "\n".join(table)         
          
     def isValidMove(self,row,column):
        # Is move on gameBoard?
@@ -158,8 +157,8 @@ class KnightsTour():
         #Check if we finished the Tour
         if self.playersBoard.successfulTraversal():
             print "\n We won!!" 
-            self.printBoard()
-            return 'Success'                   
+            #self.printBoard()
+            return 'Success', [[startingRow,startingColumn]]                   
            
         currentStep =stepInterval+1
         algorithm.computeMoves(startingRow,startingColumn,self.playersBoard) 
@@ -167,14 +166,17 @@ class KnightsTour():
         while nextMove[0] <> -1:
             nextRow = nextMove[1][0]
             nextColumn = nextMove[1][1]
-            if self.runSimulation(nextRow,nextColumn,currentStep) == 'Success':
-                return 'Success'
+            traversalStatus, movesList =  self.runSimulation(nextRow,nextColumn,currentStep)
+            if traversalStatus =='Success':
+                movesList.insert(0,[startingRow,startingColumn])
+                return 'Success', movesList
             nextMove = algorithm.getNextMove()        
         
         self.playersBoard.resetPosition(startingRow,startingColumn)    
         return "Failure"
 
 
+ #Main program execution
 quit = "N" 
 sys.setrecursionlimit(1500)
 while quit != "Y":
@@ -189,14 +191,23 @@ while quit != "Y":
     Tour = KnightsTour(boardSize,algorithmType)
     startingRow = -1
     startingColumn = -1
-
-
+    
     while (startingRow < 0 or startingRow > boardSize) or (startingColumn < 0 or startingColumn > boardSize):
         startingRow = int(raw_input('Enter your starting position: (Row # 1-8) ')) - 1
         startingColumn = int(raw_input('Enter your starting position: (Column # 1-8) ')) - 1
 
-    if Tour.runSimulation(startingRow,startingColumn,1) == "Failure":
+    tourResult, movesList = Tour.runSimulation(startingRow,startingColumn,1)
+    if tourResult == "Failure":
         print "Sorry, no tour possible for your starting positions"
-    
-    quit = str(raw_input("Would you like to play again? ( Y or N) :"))
+    else:
+        #Print out the moves listing that was successful
+        summaryBoard = Board(boardSize)
+        index =1
+        for row, column in movesList:
+            summaryBoard.setPosition(row,column, 'K')
+            print " \n Step ", index , " moving to ", row+1 , ",", column+1, " \n"
+            summaryBoard.printBoard() , "\n"
+            time.sleep(2)
+            index +=1
+    quit = str(raw_input(" \n Would you like to play again? ( Y or N) :"))
 
